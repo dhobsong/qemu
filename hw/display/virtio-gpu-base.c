@@ -186,7 +186,10 @@ virtio_gpu_base_device_realize(DeviceState *qdev,
         virtio_add_queue(vdev, 16, cursor_cb);
     }
 
-    g->enabled_output_bitmask = 1;
+    if (virtio_gpu_connect_all_outputs(g->conf))
+        g->enabled_output_bitmask = (1 << g->conf.max_outputs) - 1;
+    else
+        g->enabled_output_bitmask = 1;
 
     g->req_state[0].width = g->conf.xres;
     g->req_state[0].height = g->conf.yres;
